@@ -81,6 +81,15 @@ const Home: NextPage = () => {
     return focusNextPlayer();
   }
 
+  const playersLength = players.length;
+  const playersInputRefs = useMemo(() => {
+    return Array.from({ length: playersLength }, () => React.createRef<HTMLInputElement>());
+  }, [playersLength])
+
+  useEffect(() => {
+    playersInputRefs[playersLength - 1]?.current?.focus();
+  }, [playersInputRefs, playersLength]);
+
   return (
     <>
       <Head>
@@ -106,6 +115,7 @@ const Home: NextPage = () => {
           <div className={"w-full justify-between"}>
             {players.map((player, index) => (
               <Player
+                ref={playersInputRefs[index]}
                 selected={selectedPlayer === index}
                 key={player.id}
                 setPlayer={setPlayer}
