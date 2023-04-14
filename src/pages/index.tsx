@@ -1,6 +1,6 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import { GoPlus } from "react-icons/go";
+import { GoArrowDown, GoArrowUp, GoPlus } from "react-icons/go";
 import { Player } from "~/components/Player";
 import { useEffect, useMemo, useState } from "react";
 import React from "react";
@@ -18,6 +18,7 @@ const Home: NextPage = () => {
   const [players, setPlayers] = useState<PlayerType[]>([]);
   const [selectedPlayer, setSelectedPlayer] = useState(0);
   const [points, setPoints] = useState("");
+  const [showKeybord, setShowKeyboard] = useState(true);
 
   function setPlayer(player: PlayerType, playerIndex?: number) {
     setPlayers((prev) => {
@@ -130,27 +131,38 @@ const Home: NextPage = () => {
               />
             ))}
           </div>
-          <div className="fixed  bottom-0 w-screen rounded-t-2xl bg-white shadow-2xl p-3">
+          <div className="fixed  bottom-0 w-screen rounded-t-2xl bg-white p-3 shadow-2xl">
             <div className="flex w-full items-center">
               <span className="h-10 w-full text-center text-3xl">{points}</span>
+              <button onClick={() => setShowKeyboard((v) => !v)}>
+                {showKeybord ? (
+                  <GoArrowDown size={30} />
+                ) : (
+                  <GoArrowUp size={30} />
+                )}
+              </button>
             </div>
-            <div className="grid grid-cols-3 gap-2">
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, "-", 0, "<"].map((i) => (
+            {showKeybord && (
+              <>
+                <div className="grid grid-cols-3 gap-2">
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, "-", 0, "<"].map((i) => (
+                    <button
+                      key={i}
+                      className="h-12 rounded bg-black text-white"
+                      onClick={() => handlePointsChange(i)}
+                    >
+                      {i}
+                    </button>
+                  ))}
+                </div>
                 <button
-                  key={i}
-                  className="h-12 rounded bg-black text-white"
-                  onClick={() => handlePointsChange(i)}
+                  className="mt-3 h-12 w-full rounded bg-primary text-black"
+                  onClick={() => setPlayerPoints(points)}
                 >
-                  {i}
+                  OK
                 </button>
-              ))}
-            </div>
-            <button
-              className="mt-3 h-12 w-full rounded bg-primary text-black"
-              onClick={() => setPlayerPoints(points)}
-            >
-              OK
-            </button>
+              </>
+            )}
           </div>
         </div>
       </main>
