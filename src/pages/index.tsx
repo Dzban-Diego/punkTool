@@ -27,7 +27,7 @@ const Home: NextPage = () => {
       const sorted = [...arr].sort((a, b) => b.points - a.points);
       sorted.forEach((p, index) => {
         arr[arr.findIndex((a) => a.id === p.id)]!.place = index + 1;
-      })
+      });
       return arr;
     });
   }
@@ -69,8 +69,12 @@ const Home: NextPage = () => {
   }
 
   function setPlayerPoints(p: string) {
+    if (p === "") {
+      focusNextPlayer();
+      return;
+    }
     const player = players[selectedPlayer]!;
-    console.log(player)
+    console.log(player);
     const newPlayer = {
       ...player,
       points: player.points + parseInt(p),
@@ -83,8 +87,10 @@ const Home: NextPage = () => {
 
   const playersLength = players.length;
   const playersInputRefs = useMemo(() => {
-    return Array.from({ length: playersLength }, () => React.createRef<HTMLInputElement>());
-  }, [playersLength])
+    return Array.from({ length: playersLength }, () =>
+      React.createRef<HTMLInputElement>()
+    );
+  }, [playersLength]);
 
   useEffect(() => {
     playersInputRefs[playersLength - 1]?.current?.focus();
@@ -124,15 +130,15 @@ const Home: NextPage = () => {
               />
             ))}
           </div>
-          <div className="fixed  bottom-0 w-screen rounded-t bg-pink-500 p-3">
-            <div className="w-full flex items-center">
-              <span className="h-10 w-full text-center">{points}</span>
+          <div className="fixed  bottom-0 w-screen rounded-t-2xl bg-white shadow-2xl p-3">
+            <div className="flex w-full items-center">
+              <span className="h-10 w-full text-center text-3xl">{points}</span>
             </div>
             <div className="grid grid-cols-3 gap-2">
               {[1, 2, 3, 4, 5, 6, 7, 8, 9, "-", 0, "<"].map((i) => (
                 <button
                   key={i}
-                  className=" h-10 rounded bg-black text-white"
+                  className="h-12 rounded bg-black text-white"
                   onClick={() => handlePointsChange(i)}
                 >
                   {i}
@@ -140,7 +146,7 @@ const Home: NextPage = () => {
               ))}
             </div>
             <button
-              className="mt-3 h-10 w-full rounded bg-black text-white"
+              className="mt-3 h-12 w-full rounded bg-primary text-black"
               onClick={() => setPlayerPoints(points)}
             >
               OK

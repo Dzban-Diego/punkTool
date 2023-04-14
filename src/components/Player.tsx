@@ -26,15 +26,15 @@ export const Player = forwardRef<Ref, Props>(
     return (
       <div
         onClick={selectNextPlayer}
-        className={`flex rounded border-2 border-white p-3 text-xl ${
-          selected ? "bg-pink-200" : "bg-white"
+        className={`my-2 shadow flex rounded border-2  p-3 text-xl ${
+          selected ? "bg-primary border-primary" : "bg-white border-white"
         }`}
       >
         <h3>{player.place.toString()}</h3>
         <input
           ref={ref}
           placeholder="Kto gra?"
-          className={`ml-2 rounded ${selected ? "bg-pink-200" : "bg-white"}`}
+          className={`ml-2 rounded ${selected ? "bg-primary" : "bg-white"}`}
           value={player.name}
           onChange={handlePlayerNameChange}
         />
