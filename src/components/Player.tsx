@@ -27,12 +27,14 @@ export const Player: React.FC<Props> = ({
   return (
     <div
       onClick={selectNextPlayer}
-      className={`flex rounded border-2 border-white p-3 ${
-        selected && "bg-pink-200"
+      className={`flex text-xl rounded border-2 border-white p-3 ${
+        selected ? "bg-pink-200" : "bg-white"
       }`}
     >
+      <h3>{player.place.toString()}</h3>
       <input
-        className={`rounded text-xl ${selected && "bg-pink-200"}`}
+        placeholder="Kto gra?"
+        className={`rounded ml-2 ${selected ? "bg-pink-200" : "bg-white"}`}
         value={player.name}
         onChange={handlePlayerNameChange}
       />

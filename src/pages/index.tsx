@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import React from "react";
 
 export type PlayerType = {
+  place: number;
   id: number;
   name: string;
   points: number;
@@ -18,32 +19,24 @@ const Home: NextPage = () => {
   const [selectedPlayer, setSelectedPlayer] = useState(0);
   const [points, setPoints] = useState("");
 
-  const playersLength = useMemo(() => players.length, [players]);
-  useEffect(() => {
-    console.log("playersLength", playersLength);
-  }, [playersLength]);
-
-  const playersRefs = useMemo(() => {
-    const arr = [];
-    for (let i = 0; i < playersLength; i++) {
-      arr.push(React.createRef<{ focus: () => void }>());
-    }
-    return arr;
-  }, [playersLength]);
-
   function setPlayer(player: PlayerType, playerIndex?: number) {
     setPlayers((prev) => {
       const arr = [...prev];
       const index = playerIndex || prev.findIndex((p) => p.id === player.id);
       arr[index] = player;
+      const sorted = [...arr].sort((a, b) => b.points - a.points);
+      sorted.forEach((p, index) => {
+        arr[arr.findIndex((a) => a.id === p.id)]!.place = index + 1;
+      })
       return arr;
     });
   }
 
   function addPlayer() {
     const player: PlayerType = {
+      place: 0,
       id: players.length + 1,
-      name: "Mietek",
+      name: "",
       points: 0,
       history: [],
       bomb: false,
@@ -51,12 +44,12 @@ const Home: NextPage = () => {
     setPlayers((prev) => [...prev, player]);
   }
 
-  function focusNextPlayer(index: number) {
-    if (index === players.length - 1) {
+  function focusNextPlayer() {
+    if (selectedPlayer === players.length - 1) {
       setSelectedPlayer(0);
       return;
     }
-    setSelectedPlayer(index + 1);
+    setSelectedPlayer(selectedPlayer + 1);
   }
 
   function handlePointsChange(v: number | string) {
@@ -77,6 +70,7 @@ const Home: NextPage = () => {
 
   function setPlayerPoints(p: string) {
     const player = players[selectedPlayer]!;
+    console.log(player)
     const newPlayer = {
       ...player,
       points: player.points + parseInt(p),
@@ -84,7 +78,7 @@ const Home: NextPage = () => {
     };
     setPlayer(newPlayer);
     setPoints("");
-    return focusNextPlayer(selectedPlayer);
+    return focusNextPlayer();
   }
 
   return (
@@ -116,7 +110,7 @@ const Home: NextPage = () => {
                 key={player.id}
                 setPlayer={setPlayer}
                 player={player}
-                selectNextPlayer={() => focusNextPlayer(selectedPlayer)}
+                selectNextPlayer={focusNextPlayer}
               />
             ))}
           </div>
