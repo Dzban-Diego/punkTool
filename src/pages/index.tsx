@@ -100,7 +100,7 @@ const Home: NextPage = () => {
   return (
     <>
       <Head>
-        <title>YtKnUp</title>
+        <title>PunkTool</title>
         <meta
           name="description"
           content="App for counting points in 1000 card game"
@@ -114,7 +114,7 @@ const Home: NextPage = () => {
               "mx-3 flex w-full justify-between border-b-2 border-b-black p-3 align-middle text-3xl"
             }
           >
-            YtKnUp
+            PunkTool
             <button onClick={addPlayer}>
               <GoPlus />
             </button>

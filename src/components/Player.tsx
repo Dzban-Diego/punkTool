@@ -12,7 +12,6 @@ type Props = {
 
 type Ref = HTMLInputElement;
 
-// eslint-disable-next-line react/display-name
 export const Player = forwardRef<Ref, Props>(
   ({ player, setPlayer, selected, selectNextPlayer }, ref) => {
     function handlePlayerNameChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -34,7 +33,7 @@ export const Player = forwardRef<Ref, Props>(
         <input
           ref={ref}
           placeholder="Kto gra?"
-          className={`ml-2 rounded ${selected ? "bg-primary" : "bg-white"}`}
+          className={`ml-2 rounded flex-grow ${selected ? "bg-primary" : "bg-white"}`}
           value={player.name}
           onChange={handlePlayerNameChange}
         />
@@ -46,3 +45,4 @@ export const Player = forwardRef<Ref, Props>(
     );
   }
 );
+Player.displayName = "Player";
