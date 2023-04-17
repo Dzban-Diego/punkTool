@@ -4,21 +4,45 @@ import { GoArrowDown, GoArrowUp, GoPlus } from "react-icons/go";
 import { Player } from "~/components/Player";
 import { useEffect, useMemo, useState } from "react";
 import React from "react";
+import { z } from "zod";
+import { BiReset } from "react-icons/bi";
 
-export type PlayerType = {
-  place: number;
-  id: number;
-  name: string;
-  points: number;
-  history: number[];
-  bomb: boolean;
-};
+const playerSchema = z.object({
+  place: z.number(),
+  id: z.number(),
+  name: z.string(),
+  points: z.number(),
+  history: z.array(z.number()),
+  bomb: z.boolean(),
+});
 
+export type PlayerType = z.infer<typeof playerSchema>;
 const Home: NextPage = () => {
   const [players, setPlayers] = useState<PlayerType[]>([]);
   const [selectedPlayer, setSelectedPlayer] = useState(0);
+  const [enableReset, setEnableReset] = useState(false);
   const [points, setPoints] = useState("");
   const [showKeybord, setShowKeyboard] = useState(true);
+
+  useEffect(() => {
+    if (players.length !== 0) {
+      localStorage.setItem("players", JSON.stringify(players));
+    }
+  }, [players]);
+
+  useEffect(() => {
+    const dataString = localStorage.getItem("players");
+    if (dataString) {
+      const data: unknown = JSON.parse(dataString);
+      const parsed = z.array(playerSchema).safeParse(data);
+      if (parsed.success) {
+        setPlayers(parsed.data);
+      } else {
+        console.error(parsed.error);
+        localStorage.removeItem("players");
+      }
+    }
+  }, []);
 
   function setPlayer(player: PlayerType, playerIndex?: number) {
     setPlayers((prev) => {
@@ -75,7 +99,6 @@ const Home: NextPage = () => {
       return;
     }
     const player = players[selectedPlayer]!;
-    console.log(player);
     const newPlayer = {
       ...player,
       points: player.points + parseInt(p),
@@ -92,6 +115,19 @@ const Home: NextPage = () => {
       React.createRef<HTMLInputElement>()
     );
   }, [playersLength]);
+
+  function reset() {
+    if (enableReset) {
+      localStorage.removeItem("players");
+      setPlayers([]);
+      setEnableReset(false);
+    } else {
+      setEnableReset(true);
+      setTimeout(() => {
+        setEnableReset(false);
+      }, 3000);
+    }
+  }
 
   useEffect(() => {
     playersInputRefs[playersLength - 1]?.current?.focus();
@@ -115,9 +151,14 @@ const Home: NextPage = () => {
             }
           >
             PunkTool
-            <button onClick={addPlayer}>
-              <GoPlus />
-            </button>
+            <div>
+              <button className="mx-3"  onClick={reset}>
+                <BiReset color={enableReset ? "red" : "black"} />
+              </button>
+              <button onClick={addPlayer}>
+                <GoPlus />
+              </button>
+            </div>
           </h1>
           <div className={"w-full justify-between"}>
             {players.map((player, index) => (
@@ -127,7 +168,7 @@ const Home: NextPage = () => {
                 key={player.id}
                 setPlayer={setPlayer}
                 player={player}
-                selectNextPlayer={focusNextPlayer}
+                select={() => setSelectedPlayer(index)}
               />
             ))}
           </div>
