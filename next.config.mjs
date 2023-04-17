@@ -1,4 +1,9 @@
 // @ts-check
+import nextPWA from "next-pwa";
+
+const withPWA = nextPWA({
+  dest: 'public',
+})
 
 /**
  * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.
@@ -21,4 +26,4 @@ const config = {
     defaultLocale: "en",
   },
 };
-export default config;
+export default withPWA(config);

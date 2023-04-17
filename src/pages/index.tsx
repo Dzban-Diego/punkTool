@@ -152,10 +152,10 @@ const Home: NextPage = () => {
           >
             PunkTool
             <div>
-              <button className="mx-3"  onClick={reset}>
+              <button className="mx-3" onClick={reset} aria-label="reset">
                 <BiReset color={enableReset ? "red" : "black"} />
               </button>
-              <button onClick={addPlayer}>
+              <button onClick={addPlayer} aria-label="add player">
                 <GoPlus />
               </button>
             </div>
@@ -175,7 +175,7 @@ const Home: NextPage = () => {
           <div className="fixed  bottom-0 w-screen rounded-t-2xl bg-white p-3 shadow-2xl">
             <div className="flex w-full items-center">
               <span className="h-10 w-full text-center text-3xl">{points}</span>
-              <button onClick={() => setShowKeyboard((v) => !v)}>
+              <button onClick={() => setShowKeyboard((v) => !v)} aria-label='hide panel'>
                 {showKeybord ? (
                   <GoArrowDown size={30} />
                 ) : (

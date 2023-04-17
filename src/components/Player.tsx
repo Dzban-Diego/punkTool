@@ -1,4 +1,9 @@
-import React, { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+} from "react";
 import { BiBomb } from "react-icons/bi";
 import { FaBomb } from "react-icons/fa";
 import { GoPencil } from "react-icons/go";
@@ -42,11 +47,11 @@ export const Player = forwardRef<Ref, Props>(
     return (
       <div
         onClick={select}
-        className={`my-2 flex rounded border-2 p-3  text-xl shadow ${
+        className={`my-2 flex rounded border-2 px-3 py-1 text-xl shadow ${
           selected ? "border-primary bg-primary" : "border-white bg-white"
         }`}
       >
-        <h3>{player.place.toString()}</h3>
+        <h2>{player.place.toString()}</h2>
         <input
           ref={inputRef}
           placeholder="Kto gra?"
@@ -59,16 +64,18 @@ export const Player = forwardRef<Ref, Props>(
           disabled={!edit}
         />
         <h3>{player.points}</h3>
-        <button type="button" onClick={handlePlayerBombChange}>
-          {player.bomb ? <FaBomb /> : <BiBomb />}
+        <button type="button" className="mx-1" onClick={handlePlayerBombChange} aria-label="bomb">
+          {player.bomb ? <FaBomb size={30} /> : <BiBomb size={30} />}
         </button>
         <button
           type="button"
+          className="mx-1"
+          aria-label="edit"
           onClick={() => {
             void startEdit();
           }}
         >
-          <GoPencil />
+          <GoPencil size={30} />
         </button>
       </div>
     );
