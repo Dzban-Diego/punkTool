@@ -6,6 +6,7 @@ import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import React from "react";
 import { z } from "zod";
 import { BiReset } from "react-icons/bi";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 const playerSchema = z.object({
   place: z.number(),
@@ -20,6 +21,10 @@ export type PlayerType = z.infer<typeof playerSchema>;
 const Home: NextPage = () => {
   const [players, setPlayers] = useState<PlayerType[]>([]);
   const [selectedPlayer, setSelectedPlayer] = useState(0);
+  const playersCount = useMemo(() => players.length, [players]);
+  const [playersList] = useAutoAnimate({
+    duration: 200,
+  });
 
   useEffect(() => {
     if (players.length !== 0) {
@@ -137,7 +142,7 @@ const Home: NextPage = () => {
       <main className="flex min-h-screen flex-col items-center">
         <Header reset={reset} addPlayer={addPlayer} />
         <div className={"flex w-full flex-col items-center p-3"}>
-          <div className={"w-full justify-between"}>
+          <div className={"w-full justify-between"} ref={playersList}>
             {players.map((player, index) => (
               <Player
                 ref={playersInputRefs[index]}
@@ -149,7 +154,10 @@ const Home: NextPage = () => {
               />
             ))}
           </div>
-          <Keyboard setPlayerPoints={setPlayerPoints} />
+          <Keyboard
+            setPlayerPoints={setPlayerPoints}
+            active={playersCount !== 0}
+          />
         </div>
       </main>
     </>
@@ -160,68 +168,83 @@ export default Home;
 
 type KeyboardProps = {
   setPlayerPoints: (v: string) => void;
+  active: boolean;
 };
 
-const Keyboard: React.FC<KeyboardProps> = memo(({ setPlayerPoints }) => {
-  const [points, setPoints] = useState("");
-  const [showKeybord, setShowKeyboard] = useState(true);
+const Keyboard: React.FC<KeyboardProps> = memo(
+  ({ active, setPlayerPoints }) => {
+    const [points, setPoints] = useState("");
+    const [showKeybord, setShowKeyboard] = useState(true);
 
-  function handlePointsChange(v: number | string) {
-    if (v === "<") {
-      setPoints(points.slice(0, -1));
-      return;
-    }
-    if (v === "-") {
-      if (points[0] === "-") {
-        setPoints(points.slice(1));
+    function handlePointsChange(v: number | string) {
+      if (v === "<") {
+        setPoints(points.slice(0, -1));
         return;
       }
-      setPoints(`-${points}`);
-      return;
+      if (!active) {
+        return;
+      }
+      if (v === "-") {
+        if (points[0] === "-") {
+          setPoints(points.slice(1));
+          return;
+        }
+        setPoints(`-${points}`);
+        return;
+      }
+      if (v === 0 && (points === "" || points === "-")) {
+        return;
+      }
+      setPoints(`${points}${v}`);
     }
-    if (v === 0 && (points === "" || points === "-")) {
-      return;
-    }
-    setPoints(`${points}${v}`);
-  }
 
-  return (
-    <>
-      <div className="fixed  bottom-0 w-screen rounded-t-2xl bg-white p-3 shadow-2xl">
-        <div className="flex w-full items-center">
-          <span className="h-10 w-full text-center text-3xl">{points}</span>
-          <button onClick={() => setShowKeyboard((v) => !v)} aria-label="">
-            {showKeybord ? <GoArrowDown size={30} /> : <GoArrowUp size={30} />}
-          </button>
-        </div>
-        {showKeybord && (
-          <>
-            <div className="grid grid-cols-3 gap-2">
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, "-", 0, "<"].map((i) => (
-                <button
-                  key={i}
-                  className="h-12 rounded bg-black text-white"
-                  onClick={() => handlePointsChange(i)}
-                >
-                  {i}
-                </button>
-              ))}
-            </div>
-            <button
-              className="mt-3 h-12 w-full rounded bg-primary text-black"
-              onClick={() => {
-                setPoints("");
-                setPlayerPoints(points);
-              }}
-            >
-              OK
+    return (
+      <>
+        <div
+          className={`fixed bottom-0 w-screen rounded-t-2xl  bg-white p-3 shadow-2xl transition-transform duration-300 ${
+            showKeybord ? "" : "translate-y-80"
+          }`}
+        >
+          <div className="flex w-full items-center">
+            <span className="h-10 w-full text-center text-3xl">{points}</span>
+            <button onClick={() => setShowKeyboard((v) => !v)} aria-label="hide keyboard" className="absolute right-3">
+              <GoArrowUp
+                size={30}
+                className={`${
+                  showKeybord ? "rotate-180" : ""
+                } transition-all  duration-1000`}
+              />
             </button>
-          </>
-        )}
-      </div>
-    </>
-  );
-});
+          </div>
+          <div>
+            <div className="">
+              <div className="grid grid-cols-3 gap-2">
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, "-", 0, "<"].map((i) => (
+                  <button
+                    key={i}
+                    className="h-14 rounded-xl bg-black text-white active:bg-neutral-400"
+                    onClick={() => handlePointsChange(i)}
+                  >
+                    {i}
+                  </button>
+                ))}
+              </div>
+              <button
+                className="mt-3 h-12 w-full rounded-xl bg-primary text-black active:bg-neutral-400"
+                onClick={() => {
+                  setPoints("");
+                  setPlayerPoints(points);
+                }}
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+);
 Keyboard.displayName = "Keyboard";
 
 type HeaderType = {
@@ -252,7 +275,10 @@ const Header: React.FC<HeaderType> = memo(({ reset, addPlayer }) => {
       PunkTool
       <div>
         <button className="mx-3" onClick={handleReset} aria-label="reset">
-          <BiReset color={enableReset ? "red" : "black"} />
+          <BiReset
+            className="transition-colors"
+            color={enableReset ? "red" : "black"}
+          />
         </button>
         <button onClick={addPlayer} aria-label="add player">
           <GoPlus />

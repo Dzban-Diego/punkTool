@@ -9,3 +9,18 @@ body {
 input {
 	min-width: 0;
 }
+
+.animatedKeyboard {
+	animation-duration: 3s;
+	animation-name: slidein;
+}
+
+@keyframes slidein {
+	from {
+		transform: translateX(100%);
+	}
+
+	to {
+		transform: translateX(0);
+	}
+}
