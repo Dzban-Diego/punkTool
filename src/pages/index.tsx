@@ -1,8 +1,8 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import { GoArrowDown, GoArrowUp, GoPlus } from "react-icons/go";
-import { Player } from "~/components/Player";
-import { useEffect, useMemo, useState } from "react";
+import Player from "~/components/Player";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import React from "react";
 import { z } from "zod";
 import { BiReset } from "react-icons/bi";
@@ -20,9 +20,6 @@ export type PlayerType = z.infer<typeof playerSchema>;
 const Home: NextPage = () => {
   const [players, setPlayers] = useState<PlayerType[]>([]);
   const [selectedPlayer, setSelectedPlayer] = useState(0);
-  const [enableReset, setEnableReset] = useState(false);
-  const [points, setPoints] = useState("");
-  const [showKeybord, setShowKeyboard] = useState(true);
 
   useEffect(() => {
     if (players.length !== 0) {
@@ -57,7 +54,7 @@ const Home: NextPage = () => {
     });
   }
 
-  function addPlayer() {
+  const addPlayer = useCallback(() => {
     const player: PlayerType = {
       place: 0,
       id: players.length + 1,
@@ -67,50 +64,37 @@ const Home: NextPage = () => {
       bomb: false,
     };
     setPlayers((prev) => [...prev, player]);
-  }
+  }, [players.length]);
 
-  function focusNextPlayer() {
+  const focusNextPlayer = useCallback(() => {
     if (selectedPlayer === players.length - 1) {
       setSelectedPlayer(0);
       return;
     }
     setSelectedPlayer(selectedPlayer + 1);
-  }
+  }, [players.length, selectedPlayer]);
 
-  function handlePointsChange(v: number | string) {
-    if (players.length === 0) {
-      return;
-    }
-    if (v === "<") {
-      setPoints(points.slice(0, -1));
-      return;
-    }
-    if (v === "-") {
-      if (points[0] === "-") {
-        setPoints(points.slice(1));
+  const setPlayerPoints = useCallback(
+    (p: string) => {
+      if (p === "") {
+        focusNextPlayer();
         return;
       }
-      setPoints(`-${points}`);
-      return;
-    }
-    setPoints(`${points}${v}`);
-  }
-
-  function setPlayerPoints(p: string) {
-    if (p === "") {
-      focusNextPlayer();
-      return;
-    }
-    const player = players[selectedPlayer]!;
-    const newPlayer = {
-      ...player,
-      points: player.points + parseInt(p),
-      history: [...player.history, parseInt(p)],
-    };
-    setPlayer(newPlayer);
-    setPoints("");
-    return focusNextPlayer();
-  }
+      setPlayers((prev) => {
+        const arr = [...prev];
+        const player = arr[selectedPlayer]!;
+        const newPlayer = {
+          ...player,
+          points: player.points + parseInt(p),
+          history: [...player.history, parseInt(p)],
+        };
+        arr[selectedPlayer] = newPlayer;
+        return arr;
+      });
+      return focusNextPlayer();
+    },
+    [focusNextPlayer, selectedPlayer]
+  );
 
   const playersLength = players.length;
   const playersInputRefs = useMemo(() => {
@@ -119,22 +103,14 @@ const Home: NextPage = () => {
     );
   }, [playersLength]);
 
-  function reset() {
-    if (enableReset) {
-      localStorage.removeItem("players");
-      setPlayers([]);
-      setEnableReset(false);
-    } else {
-      setEnableReset(true);
-      setTimeout(() => {
-        setEnableReset(false);
-      }, 3000);
-    }
-  }
-
   useEffect(() => {
     playersInputRefs[playersLength - 1]?.current?.focus();
   }, [playersInputRefs, playersLength]);
+
+  const reset = useCallback(() => {
+    localStorage.removeItem("players");
+    setPlayers([]);
+  }, []);
 
   return (
     <>
@@ -147,22 +123,8 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center">
+        <Header reset={reset} addPlayer={addPlayer} />
         <div className={"flex w-full flex-col items-center p-3"}>
-          <h1
-            className={
-              "mx-3 flex w-full justify-between border-b-2 border-b-black p-3 align-middle text-3xl"
-            }
-          >
-            PunkTool
-            <div>
-              <button className="mx-3" onClick={reset} aria-label="reset">
-                <BiReset color={enableReset ? "red" : "black"} />
-              </button>
-              <button onClick={addPlayer} aria-label="add player">
-                <GoPlus />
-              </button>
-            </div>
-          </h1>
           <div className={"w-full justify-between"}>
             {players.map((player, index) => (
               <Player
@@ -175,39 +137,7 @@ const Home: NextPage = () => {
               />
             ))}
           </div>
-          <div className="fixed  bottom-0 w-screen rounded-t-2xl bg-white p-3 shadow-2xl">
-            <div className="flex w-full items-center">
-              <span className="h-10 w-full text-center text-3xl">{points}</span>
-              <button onClick={() => setShowKeyboard((v) => !v)} aria-label="">
-                {showKeybord ? (
-                  <GoArrowDown size={30} />
-                ) : (
-                  <GoArrowUp size={30} />
-                )}
-              </button>
-            </div>
-            {showKeybord && (
-              <>
-                <div className="grid grid-cols-3 gap-2">
-                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, "-", 0, "<"].map((i) => (
-                    <button
-                      key={i}
-                      className="h-12 rounded bg-black text-white"
-                      onClick={() => handlePointsChange(i)}
-                    >
-                      {i}
-                    </button>
-                  ))}
-                </div>
-                <button
-                  className="mt-3 h-12 w-full rounded bg-primary text-black"
-                  onClick={() => setPlayerPoints(points)}
-                >
-                  OK
-                </button>
-              </>
-            )}
-          </div>
+          <Keyboard setPlayerPoints={setPlayerPoints} />
         </div>
       </main>
     </>
@@ -215,3 +145,108 @@ const Home: NextPage = () => {
 };
 
 export default Home;
+
+type KeyboardProps = {
+  setPlayerPoints: (v: string) => void;
+};
+
+const Keyboard: React.FC<KeyboardProps> = memo(({ setPlayerPoints }) => {
+  const [points, setPoints] = useState("");
+  const [showKeybord, setShowKeyboard] = useState(true);
+
+  function handlePointsChange(v: number | string) {
+    if (v === "<") {
+      setPoints(points.slice(0, -1));
+      return;
+    }
+    if (v === "-") {
+      if (points[0] === "-") {
+        setPoints(points.slice(1));
+        return;
+      }
+      setPoints(`-${points}`);
+      return;
+    }
+    if (v === 0 && (points === "" || points === "-")) {
+      return;
+    }
+    setPoints(`${points}${v}`);
+  }
+
+  return (
+    <>
+      <div className="fixed  bottom-0 w-screen rounded-t-2xl bg-white p-3 shadow-2xl">
+        <div className="flex w-full items-center">
+          <span className="h-10 w-full text-center text-3xl">{points}</span>
+          <button onClick={() => setShowKeyboard((v) => !v)} aria-label="">
+            {showKeybord ? <GoArrowDown size={30} /> : <GoArrowUp size={30} />}
+          </button>
+        </div>
+        {showKeybord && (
+          <>
+            <div className="grid grid-cols-3 gap-2">
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, "-", 0, "<"].map((i) => (
+                <button
+                  key={i}
+                  className="h-12 rounded bg-black text-white"
+                  onClick={() => handlePointsChange(i)}
+                >
+                  {i}
+                </button>
+              ))}
+            </div>
+            <button
+              className="mt-3 h-12 w-full rounded bg-primary text-black"
+              onClick={() => {
+                setPoints("");
+                setPlayerPoints(points);
+              }}
+            >
+              OK
+            </button>
+          </>
+        )}
+      </div>
+    </>
+  );
+});
+Keyboard.displayName = "Keyboard";
+
+type HeaderType = {
+  reset: () => void;
+  addPlayer: () => void;
+};
+const Header: React.FC<HeaderType> = memo(({ reset, addPlayer }) => {
+  const [enableReset, setEnableReset] = useState(false);
+
+  function handleReset() {
+    if (enableReset) {
+      reset();
+      setEnableReset(false);
+      return;
+    }
+    setEnableReset(true);
+    setTimeout(() => {
+      setEnableReset(false);
+    }, 1000);
+  }
+
+  return (
+    <h1
+      className={
+        "mx-3 flex w-full justify-between border-b-2 border-b-black p-3 align-middle text-3xl"
+      }
+    >
+      PunkTool
+      <div>
+        <button className="mx-3" onClick={handleReset} aria-label="reset">
+          <BiReset color={enableReset ? "red" : "black"} />
+        </button>
+        <button onClick={addPlayer} aria-label="add player">
+          <GoPlus />
+        </button>
+      </div>
+    </h1>
+  );
+});
+Header.displayName = "Header";

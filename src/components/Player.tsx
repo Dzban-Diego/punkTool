@@ -1,5 +1,6 @@
 import React, {
   forwardRef,
+  memo,
   useEffect,
   useImperativeHandle,
   useRef,
@@ -20,7 +21,7 @@ type Ref = {
   focus: () => void;
 };
 
-export const Player = forwardRef<Ref, Props>(
+const Player = forwardRef<Ref, Props>(
   ({ player, setPlayer, selected, select }, ref) => {
     const inputRef = useRef<HTMLInputElement>(null);
     function handlePlayerNameChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -82,3 +83,4 @@ export const Player = forwardRef<Ref, Props>(
   }
 );
 Player.displayName = "Player";
+export default memo(Player);
