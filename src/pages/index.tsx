@@ -78,6 +78,9 @@ const Home: NextPage = () => {
   }
 
   function handlePointsChange(v: number | string) {
+    if (players.length === 0) {
+      return;
+    }
     if (v === "<") {
       setPoints(points.slice(0, -1));
       return;
@@ -175,7 +178,7 @@ const Home: NextPage = () => {
           <div className="fixed  bottom-0 w-screen rounded-t-2xl bg-white p-3 shadow-2xl">
             <div className="flex w-full items-center">
               <span className="h-10 w-full text-center text-3xl">{points}</span>
-              <button onClick={() => setShowKeyboard((v) => !v)} aria-label='hide panel'>
+              <button onClick={() => setShowKeyboard((v) => !v)} aria-label="">
                 {showKeybord ? (
                   <GoArrowDown size={30} />
                 ) : (
