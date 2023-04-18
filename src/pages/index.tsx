@@ -46,13 +46,23 @@ const Home: NextPage = () => {
       const arr = [...prev];
       const index = playerIndex || prev.findIndex((p) => p.id === player.id);
       arr[index] = player;
+      return arr;
+    });
+    countPlaces();
+  }
+
+  const countPlaces = useCallback(() => {
+    setPlayers((prev) => {
+      const arr = [...prev];
       const sorted = [...arr].sort((a, b) => b.points - a.points);
       sorted.forEach((p, index) => {
-        arr[arr.findIndex((a) => a.id === p.id)]!.place = index + 1;
+        const value = arr[arr.findIndex((a) => a.id === p.id)];
+        if (!value) return;
+        value.place = index + 1;
       });
       return arr;
     });
-  }
+  }, []);
 
   const addPlayer = useCallback(() => {
     const player: PlayerType = {
@@ -82,7 +92,8 @@ const Home: NextPage = () => {
       }
       setPlayers((prev) => {
         const arr = [...prev];
-        const player = arr[selectedPlayer]!;
+        const player = arr[selectedPlayer];
+        if (!player) return arr;
         const newPlayer = {
           ...player,
           points: player.points + parseInt(p),
@@ -91,9 +102,10 @@ const Home: NextPage = () => {
         arr[selectedPlayer] = newPlayer;
         return arr;
       });
+      countPlaces();
       return focusNextPlayer();
     },
-    [focusNextPlayer, selectedPlayer]
+    [focusNextPlayer, selectedPlayer, countPlaces]
   );
 
   const playersLength = players.length;
