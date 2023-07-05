@@ -37,7 +37,7 @@ const Keyboard: React.FC<KeyboardProps> = memo(
     return (
       <>
         <div
-          className={`fixed bottom-0 w-screen rounded-t-2xl  bg-white p-3 shadow-2xl transition-transform duration-300 ${
+          className={`fixed bottom-0 w-screen rounded-t-2xl right-0 bg-white p-3 shadow-2xl transition-transform duration-300 ${
             showKeybord ? "" : "translate-y-80"
           }`}
         >
