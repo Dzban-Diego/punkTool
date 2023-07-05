@@ -7,14 +7,15 @@ import React, {
 } from "react";
 import { BiBomb } from "react-icons/bi";
 import { FaBomb } from "react-icons/fa";
-import { GoPencil } from "react-icons/go";
-import { type PlayerType } from "~/pages";
+import { GoPencil, GoTrashcan } from "react-icons/go";
+import { PlayerType } from "~/utils/usePlayers";
 
 type Props = {
   setPlayer: (player: PlayerType) => void;
   player: PlayerType;
   selected: boolean;
   select: () => void;
+  remove: () => void;
 };
 
 type Ref = {
@@ -22,7 +23,7 @@ type Ref = {
 };
 
 const Player = forwardRef<Ref, Props>(
-  ({ player, setPlayer, selected, select }, ref) => {
+  ({ player, setPlayer, selected, select, remove}, ref) => {
     const inputRef = useRef<HTMLInputElement>(null);
     function handlePlayerNameChange(e: React.ChangeEvent<HTMLInputElement>) {
       setPlayer({ ...player, name: e.target.value });
@@ -65,7 +66,12 @@ const Player = forwardRef<Ref, Props>(
           disabled={!edit}
         />
         <h3>{player.points}</h3>
-        <button type="button" className="mx-1" onClick={handlePlayerBombChange} aria-label="bomb">
+        <button
+          type="button"
+          className="mx-1"
+          onClick={handlePlayerBombChange}
+          aria-label="bomb"
+        >
           {player.bomb ? <FaBomb size={30} /> : <BiBomb size={30} />}
         </button>
         <button
@@ -77,6 +83,14 @@ const Player = forwardRef<Ref, Props>(
           }}
         >
           <GoPencil size={30} />
+        </button>
+        <button
+          type="button"
+          className="mx-1"
+          aria-label="edit"
+          onClick={remove}
+        >
+          <GoTrashcan size={30} />
         </button>
       </div>
     );

@@ -89,6 +89,17 @@ const usePlayers = () => {
 	}, [players.length]);
 
 	/**
+	 * Usuwanie gracza z listy
+	 */
+	const removePlayer = useCallback((index: number) => {
+		setPlayers((prev) => {
+			const arr = [...prev];
+			arr.splice(index, 1);
+			return arr;
+		});
+	}, []);
+
+	/**
 	 * zaznacza kolejnego gracza z listy
 	 */
 	const focusNextPlayer = useCallback(() => {
@@ -138,6 +149,7 @@ const usePlayers = () => {
 		playersLength,
 		playersCount,
 		addPlayer,
+		removePlayer,
 		setPlayer,
 		selectedPlayer,
 		setSelectedPlayer,

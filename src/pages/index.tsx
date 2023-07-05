@@ -23,6 +23,7 @@ const Home: NextPage = () => {
     selectedPlayer,
     playersCount,
     setPlayerPoints,
+    removePlayer,
   } = usePlayers();
 
   const playersInputRefs = useMemo(() => {
@@ -57,6 +58,7 @@ const Home: NextPage = () => {
                 setPlayer={setPlayer}
                 player={player}
                 select={() => setSelectedPlayer(index)}
+                remove={() => removePlayer(index)}
               />
             ))}
             <div className="h-80" />
