@@ -16,6 +16,7 @@ type Props = {
   selected: boolean;
   select: () => void;
   remove: () => void;
+  edit: boolean;
 };
 
 type Ref = {
@@ -23,7 +24,7 @@ type Ref = {
 };
 
 const Player = forwardRef<Ref, Props>(
-  ({ player, setPlayer, selected, select, remove}, ref) => {
+  ({ player, setPlayer, selected, select, remove, edit: globalEdit }, ref) => {
     const inputRef = useRef<HTMLInputElement>(null);
     function handlePlayerNameChange(e: React.ChangeEvent<HTMLInputElement>) {
       setPlayer({ ...player, name: e.target.value });
@@ -49,7 +50,7 @@ const Player = forwardRef<Ref, Props>(
     return (
       <div
         onClick={select}
-        className={`my-2 flex rounded border-2 px-3 py-1 text-xl shadow ${
+        className={`my-2 flex rounded border-2 px-3 py-1 text-xl shadow w-full ${
           selected ? "border-primary bg-primary" : "border-white bg-white"
         }`}
       >
@@ -74,24 +75,28 @@ const Player = forwardRef<Ref, Props>(
         >
           {player.bomb ? <FaBomb size={30} /> : <BiBomb size={30} />}
         </button>
-        <button
-          type="button"
-          className="mx-1"
-          aria-label="edit"
-          onClick={() => {
-            void startEdit();
-          }}
-        >
-          <GoPencil size={30} />
-        </button>
-        <button
-          type="button"
-          className="mx-1"
-          aria-label="edit"
-          onClick={remove}
-        >
-          <GoTrashcan size={30} />
-        </button>
+        {globalEdit ? (
+          <>
+            <button
+              type="button"
+              className="mx-1"
+              aria-label="edit"
+              onClick={() => {
+                void startEdit();
+              }}
+            >
+              <GoPencil size={30} />
+            </button>
+            <button
+              type="button"
+              className="mx-1"
+              aria-label="edit"
+              onClick={remove}
+            >
+              <GoTrashcan size={30} />
+            </button>
+          </>
+        ) : null}
       </div>
     );
   }
