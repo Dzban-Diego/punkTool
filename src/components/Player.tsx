@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { BiBomb } from "react-icons/bi";
 import { FaBomb } from "react-icons/fa";
-import { GoPencil, GoTrashcan } from "react-icons/go";
+import { GoArrowDown, GoArrowUp, GoPencil, GoTrashcan } from "react-icons/go";
 import { PlayerType } from "~/utils/usePlayers";
 
 type Props = {
@@ -17,6 +17,8 @@ type Props = {
   select: () => void;
   remove: () => void;
   edit: boolean;
+  moveUp: () => void;
+  moveDown: () => void;
 };
 
 type Ref = {
@@ -24,7 +26,19 @@ type Ref = {
 };
 
 const Player = forwardRef<Ref, Props>(
-  ({ player, setPlayer, selected, select, remove, edit: globalEdit }, ref) => {
+  (
+    {
+      player,
+      setPlayer,
+      selected,
+      select,
+      remove,
+      edit: globalEdit,
+      moveUp,
+      moveDown,
+    },
+    ref
+  ) => {
     const inputRef = useRef<HTMLInputElement>(null);
     function handlePlayerNameChange(e: React.ChangeEvent<HTMLInputElement>) {
       setPlayer({ ...player, name: e.target.value });
@@ -50,10 +64,20 @@ const Player = forwardRef<Ref, Props>(
     return (
       <div
         onClick={select}
-        className={`my-2 flex rounded border-2 px-3 py-1 text-xl shadow w-full ${
+        className={`my-2 flex w-full rounded border-2 px-3 py-1 text-xl shadow ${
           selected ? "border-primary bg-primary" : "border-white bg-white"
         }`}
       >
+        {globalEdit ? (
+          <button
+            type="button"
+            className="mx-1"
+            aria-label="edit"
+            onClick={remove}
+          >
+            <GoTrashcan size={30} />
+          </button>
+        ) : null}
         <h2>{player.place.toString()}</h2>
         <input
           ref={inputRef}
@@ -91,9 +115,17 @@ const Player = forwardRef<Ref, Props>(
               type="button"
               className="mx-1"
               aria-label="edit"
-              onClick={remove}
+              onClick={moveUp}
             >
-              <GoTrashcan size={30} />
+              <GoArrowUp size={30} />
+            </button>
+            <button
+              type="button"
+              className="mx-1"
+              aria-label="edit"
+              onClick={moveDown}
+            >
+              <GoArrowDown size={30} />
             </button>
           </>
         ) : null}

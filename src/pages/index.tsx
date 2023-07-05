@@ -20,6 +20,8 @@ const Home: NextPage = () => {
     reset,
     setPlayer,
     addPlayer,
+    movePlayerUp,
+    movePlayerDown,
     setSelectedPlayer,
     selectedPlayer,
     playersCount,
@@ -66,6 +68,8 @@ const Home: NextPage = () => {
                 select={() => setSelectedPlayer(index)}
                 remove={() => removePlayer(index)}
                 edit={edit}
+                moveUp={() => movePlayerUp(index)}
+                moveDown={() => movePlayerDown(index)}
               />
             ))}
             <div className="h-80" />

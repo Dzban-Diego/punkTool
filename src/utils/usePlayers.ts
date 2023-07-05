@@ -100,6 +100,38 @@ const usePlayers = () => {
 	}, []);
 
 	/**
+	 * Przeniesieniei gracza do góry
+	 */
+	const movePlayerUp = useCallback((index: number) => {
+		setPlayers((prev) => {
+			const arr = [...prev];
+			const player = arr[index];
+			const prevPlayer = arr[index - 1];
+			if (!prevPlayer || !player) return arr;
+			arr[index] = prevPlayer;
+			arr[index - 1] = player;
+			setSelectedPlayer(index - 1);
+			return arr;
+		});
+	}, []);
+
+	/**
+	 * Przeniesieniei gracza w dół
+	 */
+	const movePlayerDown = useCallback((index: number) => {
+		setPlayers((prev) => {
+			const arr = [...prev];
+			const player = arr[index];
+			const nextPlayerPlayer = arr[index + 1];
+			if (!nextPlayerPlayer || !player) return arr;
+			arr[index] = nextPlayerPlayer;
+			arr[index + 1] = player;
+			setSelectedPlayer(index + 1);
+			return arr;
+		});
+	}, []);
+
+	/**
 	 * zaznacza kolejnego gracza z listy
 	 */
 	const focusNextPlayer = useCallback(() => {
@@ -151,6 +183,8 @@ const usePlayers = () => {
 		addPlayer,
 		removePlayer,
 		setPlayer,
+		movePlayerUp,
+		movePlayerDown,
 		selectedPlayer,
 		setSelectedPlayer,
 		setPlayerPoints,
