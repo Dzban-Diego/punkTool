@@ -45,9 +45,9 @@ const Home: NextPage = () => {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex min-h-screen max-h-screen flex-col items-center">
+      <main className="flex max-h-screen min-h-screen flex-col items-center">
         <Header reset={reset} addPlayer={addPlayer} />
-        <div className={"flex w-full flex-col items-center p-3"}>
+        <div className={"flex flex-col items-center overflow-scroll p-3"}>
           <div className={"w-full justify-between"} ref={playersList}>
             {players.map((player, index) => (
               <Player
@@ -59,6 +59,8 @@ const Home: NextPage = () => {
                 select={() => setSelectedPlayer(index)}
               />
             ))}
+            <div className="h-80" />
+            <div className="h-20" />
           </div>
           <Keyboard
             setPlayerPoints={setPlayerPoints}
