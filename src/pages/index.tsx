@@ -45,7 +45,7 @@ const Home: NextPage = () => {
         <title>PointTool</title>
         <meta
           name="description"
-          content="To ta apka do liczenia punktów co nie ma logo"
+          content="To ta apka do liczenia punktów"
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
