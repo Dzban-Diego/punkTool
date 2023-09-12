@@ -43,7 +43,7 @@ const Home: NextPage = () => {
         <title>PointTool</title>
         <meta
           name="description"
-          content="App for counting points in 1000 card game"
+          content="To ta apka do liczenia punktów"
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
