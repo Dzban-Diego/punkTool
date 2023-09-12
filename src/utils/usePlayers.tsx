@@ -32,7 +32,7 @@ const usePlayersInit = () => {
 	const [selectedPlayer, setSelectedPlayer] = useState(0);
 	const playersCount = useMemo(() => players.length, [players]);
 
-	const { rankMode, gameMode } = useGameSettings();
+	const { rankMode, gameMode, defaultPoints } = useGameSettings();
 
 	/**
 	 * Zapisuje w localstorage zmiany w graczach po zmianie danych
@@ -106,7 +106,7 @@ const usePlayersInit = () => {
 			place: 0,
 			id: players.length + 1,
 			name: "",
-			points: 0,
+			points: defaultPoints,
 			history: [],
 			bomb: false,
 		};

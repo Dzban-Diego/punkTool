@@ -11,6 +11,7 @@ type RankMode = z.infer<typeof RankModeSchema>;
 function useGameSettingsInit() {
 	const [gameMode, setGameMode] = useState<GameMode>("default");
 	const [rankMode, setRankMode] = useState<RankMode>("reverse");
+	const [defaultPoints, setDefaultPoints] = useState<number>(0);
 
 	useEffect(() => {
 		const gameMode = GameModeSchema.safeParse(localStorage.getItem("gameMode"));
@@ -33,13 +34,15 @@ function useGameSettingsInit() {
 	useEffect(() => {
 		if (gameMode === "thousand") {
 			setRankMode("default");
+			setDefaultPoints(0);
 		}
-	}, [gameMode]);
-
-
-	useEffect(() => {
 		if (gameMode === "darts") {
 			setRankMode("reverse");
+			setDefaultPoints(301);
+		}
+		if (gameMode === "default") {
+			setRankMode("default");
+			setDefaultPoints(0);
 		}
 	}, [gameMode]);
 
@@ -48,6 +51,8 @@ function useGameSettingsInit() {
 		setGameMode,
 		rankMode,
 		setRankMode,
+		defaultPoints,
+		setDefaultPoints,
 	};
 }
 

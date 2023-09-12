@@ -4,7 +4,14 @@ import Switch from "~/components/Switch";
 import useGameSettings from "~/utils/useGameSettings";
 
 export default function Page() {
-  const { rankMode, gameMode, setRankMode, setGameMode } = useGameSettings();
+  const {
+    rankMode,
+    gameMode,
+    setRankMode,
+    setGameMode,
+    defaultPoints,
+    setDefaultPoints,
+  } = useGameSettings();
 
   const gameModeValues: { value: typeof gameMode; label: string }[] = [
     { value: "default", label: "Domyślny" },
@@ -39,6 +46,21 @@ export default function Page() {
                 setRankMode(rankMode === "reverse" ? "default" : "reverse")
               }
             />
+          </div>
+        )}
+        {gameMode === "darts" && (
+          <div className="row mt-5 flex items-center justify-between">
+            <h2 className="text-xl">Domyślna ilość punktów</h2>
+            <select
+              onChange={(e) => setDefaultPoints(parseInt(e.target.value))}
+              value={defaultPoints}
+            >
+              {[0, 301, 601].map((value) => (
+                <option key={value} value={value}>
+                  {value}
+                </option>
+              ))}
+            </select>
           </div>
         )}
       </main>
