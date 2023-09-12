@@ -1,4 +1,12 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+	createContext,
+	PropsWithChildren,
+	useCallback,
+	useEffect,
+	useMemo,
+	useState,
+	useContext,
+} from "react";
 import { z } from "zod";
 
 const playerSchema = z.object({
@@ -17,7 +25,8 @@ const playerSchema = z.object({
 
 export type PlayerType = z.infer<typeof playerSchema>;
 
-const usePlayers = () => {
+const usePlayersInit = () => {
+	const [editMode, setEditMode] = useState(false);
 	const [players, setPlayers] = useState<PlayerType[]>([]);
 	const [selectedPlayer, setSelectedPlayer] = useState(0);
 	const playersCount = useMemo(() => players.length, [players]);
@@ -199,7 +208,19 @@ const usePlayers = () => {
 		setSelectedPlayer,
 		setPlayerPoints,
 		reset,
+		editMode,
+		setEditMode,
 	};
+};
+
+const PlayersContext = createContext<ReturnType<typeof usePlayersInit>>(null!);
+const usePlayers = () => useContext(PlayersContext);
+
+export const PlayersProvider: React.FC<PropsWithChildren> = ({ children }) => {
+	const value = usePlayersInit();
+	return (
+		<PlayersContext.Provider value={value}>{children}</PlayersContext.Provider>
+	);
 };
 
 export default usePlayers;

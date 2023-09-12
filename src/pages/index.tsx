@@ -1,15 +1,14 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import Player from "~/components/Player";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import React from "react";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import usePlayers from "~/utils/usePlayers";
+import usePlayersInit from "~/utils/usePlayers";
 import Keyboard from "~/components/Keyboard";
 import Header from "~/components/Header";
 
 const Home: NextPage = () => {
-  const [edit, setEdit] = useState(false);
   const [playersList] = useAutoAnimate({
     duration: 200,
   });
@@ -17,9 +16,7 @@ const Home: NextPage = () => {
   const {
     playersLength,
     players,
-    reset,
     setPlayer,
-    addPlayer,
     movePlayerUp,
     movePlayerDown,
     setSelectedPlayer,
@@ -27,7 +24,8 @@ const Home: NextPage = () => {
     playersCount,
     setPlayerPoints,
     removePlayer,
-  } = usePlayers();
+    editMode,
+  } = usePlayersInit();
 
   const playersInputRefs = useMemo(() => {
     return Array.from({ length: playersLength }, () =>
@@ -50,13 +48,8 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex max-h-screen min-h-screen flex-col items-center">
-        <Header
-          reset={reset}
-          addPlayer={addPlayer}
-          edit={edit}
-          setEdit={setEdit}
-        />
-        <div className={"flex flex-col overflow-scroll p-3 w-full"}>
+        <Header />
+        <div className={"flex w-full flex-col overflow-scroll p-3"}>
           <div className={"w-full justify-between"} ref={playersList}>
             {players.map((player, index) => (
               <Player
@@ -65,9 +58,9 @@ const Home: NextPage = () => {
                 key={player.id}
                 setPlayer={setPlayer}
                 player={player}
+                edit={editMode}
                 select={() => setSelectedPlayer(index)}
                 remove={() => removePlayer(index)}
-                edit={edit}
                 moveUp={() => movePlayerUp(index)}
                 moveDown={() => movePlayerDown(index)}
               />
