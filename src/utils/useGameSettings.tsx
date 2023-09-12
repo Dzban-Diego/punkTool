@@ -36,6 +36,13 @@ function useGameSettingsInit() {
 		}
 	}, [gameMode]);
 
+
+	useEffect(() => {
+		if (gameMode === "darts") {
+			setRankMode("reverse");
+		}
+	}, [gameMode]);
+
 	return {
 		gameMode,
 		setGameMode,

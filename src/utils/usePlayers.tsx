@@ -8,6 +8,7 @@ import {
 	useContext,
 } from "react";
 import { z } from "zod";
+import useGameSettings from "./useGameSettings";
 
 const playerSchema = z.object({
 	place: z.number(),
@@ -30,6 +31,8 @@ const usePlayersInit = () => {
 	const [players, setPlayers] = useState<PlayerType[]>([]);
 	const [selectedPlayer, setSelectedPlayer] = useState(0);
 	const playersCount = useMemo(() => players.length, [players]);
+
+	const { rankMode } = useGameSettings();
 
 	/**
 	 * Zapisuje w localstorage zmiany w graczach po zmianie danych
@@ -77,6 +80,11 @@ const usePlayersInit = () => {
 		setPlayers((prev) => {
 			const arr = [...prev];
 			const sorted = [...arr].sort((a, b) => b.points - a.points);
+
+			if (rankMode === "reverse") {
+				sorted.reverse();
+			}
+
 			sorted.forEach((p, index) => {
 				const value = arr[arr.findIndex((a) => a.id === p.id)];
 				if (!value) return;
@@ -84,7 +92,11 @@ const usePlayersInit = () => {
 			});
 			return arr;
 		});
-	}, []);
+	}, [rankMode]);
+
+	useEffect(() => {
+		countPlaces();
+	}, [rankMode]);
 
 	/**
 	 * dodaje nowego gracza do listy
