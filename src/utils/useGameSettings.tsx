@@ -13,12 +13,8 @@ function useGameSettingsInit() {
 	const [rankMode, setRankMode] = useState<RankMode>("reverse");
 
 	useEffect(() => {
-		const gameMode = GameModeSchema.safeParse(
-			localStorage.getItem("gameMode")
-		);
-		const rankMode = RankModeSchema.safeParse(
-			localStorage.getItem("rankMode")
-		);
+		const gameMode = GameModeSchema.safeParse(localStorage.getItem("gameMode"));
+		const rankMode = RankModeSchema.safeParse(localStorage.getItem("rankMode"));
 
 		if (gameMode.success) {
 			setGameMode(gameMode.data);
@@ -33,6 +29,12 @@ function useGameSettingsInit() {
 		localStorage.setItem("gameMode", gameMode);
 		localStorage.setItem("rankMode", rankMode);
 	}, [gameMode, rankMode]);
+
+	useEffect(() => {
+		if (gameMode === "thousand") {
+			setRankMode("default");
+		}
+	}, [gameMode]);
 
 	return {
 		gameMode,

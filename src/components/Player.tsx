@@ -9,6 +9,7 @@ import React, {
 import { BiBomb } from "react-icons/bi";
 import { FaBomb } from "react-icons/fa";
 import { GoArrowDown, GoArrowUp, GoPencil, GoTrashcan } from "react-icons/go";
+import useGameSettings from "~/utils/useGameSettings";
 import { PlayerType } from "~/utils/usePlayers";
 
 type Props = {
@@ -44,6 +45,9 @@ const Player = forwardRef<Ref, Props>(
 		function handlePlayerNameChange(e: React.ChangeEvent<HTMLInputElement>) {
 			setPlayer({ ...player, name: e.target.value });
 		}
+
+		const { gameMode } = useGameSettings();
+
 		const [edit, setEdit] = React.useState(false);
 		const [historyList] = useAutoAnimate({
 			duration: 200,
@@ -96,14 +100,16 @@ const Player = forwardRef<Ref, Props>(
 						disabled={!edit}
 					/>
 					<h3>{player.points}</h3>
-					<button
-						type="button"
-						className="mx-1"
-						onClick={handlePlayerBombChange}
-						aria-label="bomb"
-					>
-						{player.bomb ? <FaBomb size={30} /> : <BiBomb size={30} />}
-					</button>
+					{gameMode === "thousand" ? (
+						<button
+							type="button"
+							className="mx-1"
+							onClick={handlePlayerBombChange}
+							aria-label="bomb"
+						>
+							{player.bomb ? <FaBomb size={30} /> : <BiBomb size={30} />}
+						</button>
+					) : null}
 					{globalEdit ? (
 						<>
 							<button

@@ -30,15 +30,17 @@ export default function Page() {
             ))}
           </select>
         </div>
-        <div className="row mt-5 flex items-center justify-between">
-          <h2 className="text-xl">Odwróć liczenie rankingu</h2>
-          <Switch
-            isOn={rankMode === "reverse"}
-            handleToggle={() =>
-              setRankMode(rankMode === "reverse" ? "default" : "reverse")
-            }
-          />
-        </div>
+        {gameMode === "default" && (
+          <div className="row mt-5 flex items-center justify-between">
+            <h2 className="text-xl">Odwróć liczenie rankingu</h2>
+            <Switch
+              isOn={rankMode === "reverse"}
+              handleToggle={() =>
+                setRankMode(rankMode === "reverse" ? "default" : "reverse")
+              }
+            />
+          </div>
+        )}
       </main>
     </div>
   );
