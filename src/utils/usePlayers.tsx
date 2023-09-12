@@ -111,7 +111,7 @@ const usePlayersInit = () => {
 			bomb: false,
 		};
 		setPlayers((prev) => [...prev, player]);
-	}, [players.length]);
+	}, [players.length, defaultPoints]);
 
 	/**
 	 * Usuwanie gracza z listy

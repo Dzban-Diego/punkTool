@@ -38,7 +38,7 @@ const Header: React.FC = memo(() => {
         >
           <RiSettings4Fill
             size={30}
-            color={editMode ? "red" : "black"}
+            color={"black"}
             className={"transition-colors"}
           />
         </button>

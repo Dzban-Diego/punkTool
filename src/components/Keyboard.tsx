@@ -70,7 +70,7 @@ const Keyboard: React.FC<KeyboardProps> = memo(
                 ))}
               </div>
               <button
-                className="mt-3 h-12 w-full rounded-xl bg-primary text-black active:bg-neutral-400"
+                className="mt-3 h-16 mb-6 w-full rounded-xl bg-primary text-black active:bg-neutral-400"
                 onClick={() => {
                   setPoints("");
                   setPlayerPoints(points);

@@ -16,7 +16,6 @@ function useGameSettingsInit() {
 	useEffect(() => {
 		const gameMode = GameModeSchema.safeParse(localStorage.getItem("gameMode"));
 		const rankMode = RankModeSchema.safeParse(localStorage.getItem("rankMode"));
-		console.log(gameMode, rankMode);
 
 		if (gameMode.success) {
 			setGameMode(gameMode.data);
