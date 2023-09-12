@@ -6,7 +6,12 @@ const playerSchema = z.object({
 	id: z.number(),
 	name: z.string(),
 	points: z.number(),
-	history: z.array(z.number()),
+	history: z.array(
+		z.object({
+			index: z.number(),
+			points: z.number(),
+		})
+	),
 	bomb: z.boolean(),
 });
 
@@ -49,8 +54,7 @@ const usePlayers = () => {
 	function setPlayer(player: PlayerType, playerIndex?: number) {
 		setPlayers((prev) => {
 			const arr = [...prev];
-			const index =
-				playerIndex || prev.findIndex((p) => p.id === player.id);
+			const index = playerIndex || prev.findIndex((p) => p.id === player.id);
 			arr[index] = player;
 			return arr;
 		});
@@ -158,7 +162,13 @@ const usePlayers = () => {
 				const newPlayer = {
 					...player,
 					points: player.points + parseInt(p),
-					history: [...player.history, parseInt(p)],
+					history: [
+						{
+							index: player.history.length,
+							points: parseInt(p),
+						},
+						...player.history,
+					],
 				};
 				arr[selectedPlayer] = newPlayer;
 				return arr;
