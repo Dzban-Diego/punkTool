@@ -32,7 +32,7 @@ const usePlayersInit = () => {
 	const [selectedPlayer, setSelectedPlayer] = useState(0);
 	const playersCount = useMemo(() => players.length, [players]);
 
-	const { rankMode } = useGameSettings();
+	const { rankMode, gameMode } = useGameSettings();
 
 	/**
 	 * Zapisuje w localstorage zmiany w graczach po zmianie danych
@@ -176,6 +176,11 @@ const usePlayersInit = () => {
 				focusNextPlayer();
 				return;
 			}
+
+			if (gameMode === "darts") {
+				p = (parseInt(p) * -1).toString();
+			}
+
 			setPlayers((prev) => {
 				const arr = [...prev];
 				const player = arr[selectedPlayer];
@@ -197,7 +202,7 @@ const usePlayersInit = () => {
 			countPlaces();
 			return focusNextPlayer();
 		},
-		[focusNextPlayer, selectedPlayer, countPlaces]
+		[focusNextPlayer, selectedPlayer, countPlaces, gameMode]
 	);
 
 	const playersLength = players.length;
