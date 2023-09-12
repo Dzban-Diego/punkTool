@@ -16,6 +16,7 @@ function useGameSettingsInit() {
 	useEffect(() => {
 		const gameMode = GameModeSchema.safeParse(localStorage.getItem("gameMode"));
 		const rankMode = RankModeSchema.safeParse(localStorage.getItem("rankMode"));
+		console.log(gameMode, rankMode);
 
 		if (gameMode.success) {
 			setGameMode(gameMode.data);
@@ -28,8 +29,11 @@ function useGameSettingsInit() {
 
 	useEffect(() => {
 		localStorage.setItem("gameMode", gameMode);
+	}, [gameMode]);
+
+	useEffect(() => {
 		localStorage.setItem("rankMode", rankMode);
-	}, [gameMode, rankMode]);
+	}, [rankMode]);
 
 	useEffect(() => {
 		if (gameMode === "thousand") {
